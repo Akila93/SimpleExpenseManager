@@ -1,5 +1,6 @@
 package lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -21,7 +22,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
     List<Transaction> transactionList = null;
     @Override
     public void logTransaction(Date date, String accountNo, ExpenseType expenseType, double amount) {
-        this.mydatabase = openOrCreateDatabase("130085P",MODE_PRIVATE,null);
+        this.mydatabase = openOrCreateDatabase("130085P", Context.MODE_PRIVATE,null);
         String sqlQ ="INSERT INTO Transactions VALUES("+date+","+accountNo+","+expenseType+","+amount+");";
         mydatabase.execSQL(sqlQ);
 
@@ -31,7 +32,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
     public List<Transaction> getAllTransactionLogs() {
         this.transactionList = new ArrayList<Transaction>();
         String sqlQ ="Select * from Transactions;";
-        this.mydatabase = openOrCreateDatabase("130085P",MODE_PRIVATE,null);
+        this.mydatabase = openOrCreateDatabase("130085P",Context.MODE_PRIVATE,null);
         Cursor resultSet = this.mydatabase.rawQuery(sqlQ,null);
         resultSet.moveToFirst();
         Date date = new Date();
@@ -57,7 +58,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
     public List<Transaction> getPaginatedTransactionLogs(int limit) {
         List<Transaction> tList = new ArrayList<Transaction>();
         String sqlQ ="Select * from (Select * from Transaction order by date desc) where ROWNUM <= "+limit+";";
-        this.mydatabase = openOrCreateDatabase("130085P",MODE_PRIVATE,null);
+        this.mydatabase = openOrCreateDatabase("130085P",Context.MODE_PRIVATE,null);
         Cursor resultSet = this.mydatabase.rawQuery(sqlQ,null);
         resultSet.moveToFirst();
         Date date = new Date();
