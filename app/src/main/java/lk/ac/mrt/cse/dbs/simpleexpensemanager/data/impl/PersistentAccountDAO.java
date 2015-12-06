@@ -1,13 +1,16 @@
-package lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model;
+package lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import android.database.*;
+import android.database.sqlite.SQLiteDatabase;
 //import android.database.sqlite.SQLiteDatabase;
 
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.AccountDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.exception.InvalidAccountException;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
 //import static android.database.sqlite.SQLiteDatabase;
 
 import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
@@ -16,13 +19,20 @@ import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
  * Created by Ak on 12/6/2015.
  */
 public class PersistentAccountDAO implements AccountDAO{
-    List<Account> acc_list;
-    List<String> acc_num;
-    private SQLiteDatabse mydatabase;
+    private List<Account> acc_list;
+    private List<String> acc_num;
+    private SQLiteDatabase mydatabase = null;
+
+    public PersistentAccountDAO() {
+        acc_num = new ArrayList<>();
+        acc_list = new ArrayList<>();
+    }
+
     @Override
     public List<String> getAccountNumbersList() {
         String sqlQ ="Select accountNo from Accounts;";
         this.acc_num = new ArrayList<String>();
+        this.mydatabase = openOrCreateDatabase("130085P",MODE_PRIVATE,null);
         Cursor resultSet = this.mydatabase.rawQuery(sqlQ,null);
         resultSet.moveToFirst();
         String acc_no = resultSet.getString(1);
@@ -55,7 +65,7 @@ public class PersistentAccountDAO implements AccountDAO{
         if(accountNo == null){throw new InvalidAccountException("no AccountNo given!");}
 
         String sqlQ ="Select * from Accounts where accountNo="+accountNo+";";
-
+        this.mydatabase = openOrCreateDatabase("130085P",MODE_PRIVATE,null);
         Cursor resultSet = this.mydatabase.rawQuery(sqlQ,null);
 
         if(resultSet.getCount() == 0){throw new InvalidAccountException("Account does not exist!");}
@@ -112,7 +122,7 @@ public class PersistentAccountDAO implements AccountDAO{
         if(accountNo == null){return;}
 
         String sqlQ ="Select accountBalance from Accounts where accountNo="+accountNo+";";
-
+        this.mydatabase = openOrCreateDatabase("130085P",MODE_PRIVATE,null);
         Cursor resultSet = this.mydatabase.rawQuery(sqlQ,null);
 
         if(resultSet.getCount() == 0){throw new InvalidAccountException("Account does not exist!");}
