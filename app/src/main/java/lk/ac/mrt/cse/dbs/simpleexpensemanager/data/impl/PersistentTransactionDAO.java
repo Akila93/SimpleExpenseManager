@@ -27,7 +27,14 @@ public class PersistentTransactionDAO implements TransactionDAO {
         mydatabase.execSQL(sqlQ);
 
     }
-
+    public PersistentTransactionDAO(){
+        if(SQLiteDatabase.openDatabase("130085P", null, Context.MODE_PRIVATE)==null){
+            SQLiteDatabase.openOrCreateDatabase("130085P", null);
+            String tempString = "Create table Transactions (date_in date ,accountNo varchar(20),expenseType varchar(20),amount double)";
+            mydatabase.execSQL(tempString);
+        }
+        this.mydatabase = SQLiteDatabase.openOrCreateDatabase("130085P", Context.MODE_PRIVATE, null );
+    }
     @Override
     public List<Transaction> getAllTransactionLogs() {
         this.transactionList = new ArrayList<Transaction>();
@@ -57,7 +64,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
     @Override
     public List<Transaction> getPaginatedTransactionLogs(int limit) {
         List<Transaction> tList = new ArrayList<Transaction>();
-        String sqlQ ="Select * from (Select * from Transaction order by date desc) where ROWNUM <= "+limit+";";
+        String sqlQ ="Select * from (Select * from Transaction order by date_in desc) where ROWNUM <= "+limit+";";
         this.mydatabase = openOrCreateDatabase("130085P",Context.MODE_PRIVATE,null);
         Cursor resultSet = this.mydatabase.rawQuery(sqlQ,null);
         resultSet.moveToFirst();
